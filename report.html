@@ -13240,9 +13240,9 @@ AABJRU5ErkJggg==
 </ul>
 <p><strong>State Space</strong></p>
 <ul>
-<li>Combinations of Features = 3 x 2 x 4 x 4 = 384</li>
-<li>Size of state space = 384</li>
-<li>There are 384 different states that the Smartcab can be in </li>
+<li>Combinations of Features = 3 x 2 x 4 x 4 = 96</li>
+<li>Size of state space = 96</li>
+<li>There are 96 different states that the Smartcab can be in </li>
 <li>For each of these states the agent can chose 1 of 4 valid actions [left, right, forward, None]</li>
 <li>Need to learn the best action to take for each of these states</li>
 </ul>
@@ -14534,7 +14534,7 @@ zMzMzKxGnGCZmZmZmZnViBMsMzMzMzOzGnGCZWZmZmZmViP/D8+lUL47cyraAAAAAElFTkSuQmCC
 <li>The agent using the default learning has managed to get an A+ reliability rating, however the safety rating remains low with an F</li>
 <li>There are 20 training trials before testing, which makes sense since 1 - 0.05*19 = 0.05 = tolerance</li>
 <li>From the graph we can see that the epsilon value is decreasing at a linear rate, while the alpha value reaminss constant at 0.5 for all trials</li>
-<li>From the graphs, we can see that the agent is learning to to make actions which give a better reward, and to decrease the nuber of bad actions which cause traffic violations</li>
+<li>From the graphs, we can see that the agent is learning to to make actions which give a better reward, and to decrease the number of bad actions which cause traffic violations</li>
 <li>More trials would cause these to further improve</li>
 <li>A look at the policy along with the high reliability rating indicates that the agent has learned to generally choose enough actions that will take it to the destination before the deadline, however it has not learned enough that the action does not violate traffic conditions, and the F rating means that the agent caused at least one major accident</li>
 </ul>
@@ -16203,65 +16203,99 @@ VvIFZNMB0lVKGbEAAAAASUVORK5CYII=
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p><strong>Answer:</strong></p>
+<p>Basically the optimal policy is to choose the action that matches the next waypoint if that action does not cause any traffic violations, and choose None if the action matching the waypoint does cause traffic violations.</p>
+<p>If the light is Green then the agent has right of way for moving forward or right. If turning left, oncoming cars moving forward have right of way, and so the agent can only move left when there is no oncoming traffic, or oncoming traffic is not moving forward.</p>
+<p>If the light is Red, then the agent may not move Forward, or Left, however it may turn Right if there is no traffic on the left, or traffic on the left is not moving forward.</p>
+<p>The optimal policy can be summarised as:</p>
 <ul>
 <li>Waypoint = Forward AND Light = Green: Action = Forward</li>
-<li>Waypoint = Right AND (Light = Green OR NOT Traffic from Left = Foward): Action = Right</li>
-<li>Waypoint = Left AND Light = Green AND (Oncoming Traffic = None OR Oncoming Traffic = Left): Action = Left</li>
-<li><p>Else: Action = None</p>
-</li>
-<li><p>An action that will get the agent closer to the destination without causing any traffic violations should have the biggest positive number</p>
-</li>
-<li>An action that moves the agent adjacent to the destination without causing any traffic accidents should have the next largest number</li>
-<li>An action that moves the agent in the opposite direction to the destination without causing any accidents should have the next largest number</li>
-<li>A None action when the agent should have moved should have a negative number</li>
-<li>Any action that would cause a traffic violation should have a large negative number</li>
+<li>Waypoint = Right AND Light = Green: Action = Right</li>
+<li>Waypoint = Right AND LIGHT = RED AND thre is no traffic on the left or traffic from the left is not going forward: Action = Right</li>
+<li>Waypoint = Left AND Light = Green AND there is no oncoming traffic or oncoming traffic is turning left: Action = Left</li>
+<li>Else (Light = Red AND WAYPOINT = LEFT or FORWARD or WAYPOINT = Right AND Traffic from Left is moving Forward) : Action = None</li>
 </ul>
 <p><strong>State Dictionary</strong></p>
 <ul>
 <li>{waypoint, light, left traffic, oncoming traffic}</li>
 </ul>
-<p><strong>Examples where agent demonstrates leanring the optimal policy</strong>:</p>
+<p><strong>Examples where agent demonstrates learning the optimal policy</strong>:</p>
 <ul>
-<li>('forward', 'green', None, None) <ul>
-<li>forward : 1.77 </li>
+<li><p>Waypoint = Forward AND Light = Green: Action = Forward</p>
+<ul>
+<li>('forward', 'green', None, None)<ul>
+<li><strong>forward : 1.77</strong></li>
 <li>None : -5.35 </li>
 <li>right : 0.94 </li>
 <li>left : 0.97 </li>
 </ul>
 </li>
 </ul>
+</li>
+</ul>
 <p>If the waypoint is forward and the light is green, the best action is forward, Left and Right have similar values, since No oncoming traffic would cause an accident for turning left, no action has negative value</p>
 <ul>
+<li>Waypoint = Right AND Light = Green: Action = Right<ul>
+<li>('right', 'green', None, None)<ul>
+<li>forward : 1.29</li>
+<li>None : -5.25</li>
+<li><strong>right : 2.31</strong></li>
+<li>left : 0.39</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>When the next waypoint is right and the light is green, then the agent should turn right</p>
+<ul>
+<li>Waypoint = Right AND LIGHT = RED AND thre is no traffic on the left or traffic from the left is not going forward: Action = Right<ul>
+<li>('right', 'red', None, None)<ul>
+<li>forward : -10.21</li>
+<li>None : 1.02</li>
+<li><strong>right : 1.75</strong></li>
+<li>left : -9.54</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>Waypoint is right, light is red, no traffic from the left, best action is to go right. Forward and left are large negatives since they would be a traffic violation for running red light</p>
+<ul>
+<li>Waypoint = Left AND Light = Green AND there is no oncoming traffic or oncoming traffic is turning left: Action = Left<ul>
 <li>('left', 'green', None, 'left')<ul>
 <li>forward : 1.09</li>
 <li>None : -4.47</li>
 <li>right : 0.26</li>
-<li>left : 2.03</li>
+<li><strong>left : 2.03</strong></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
 <p>Waypoint is left, light is green, and there is no oncoming traffic, best action is to turn left, 2nd best to go forward which is adjacent to destination, 3rd best to go right which is opposite destination, no action is negative</p>
 <ul>
-<li>('right', 'red', None, None)<ul>
-<li>forward : -10.21</li>
-<li>None : 1.02</li>
-<li>right : 1.75</li>
-<li>left : -9.54</li>
+<li>Else: Action = None<ul>
+<li>('left', 'red', 'right', 'left')<ul>
+<li>forward : 0.00</li>
+<li><strong>None : 1.57</strong></li>
+<li>right : -0.24</li>
+<li>left : -15.53</li>
 </ul>
 </li>
 </ul>
-<p>Waypoint is right, light is red, no traffic from the left, best action is to go right, however no action is still positive where it should probably be negative since the action would recieve a negative reward, however if just choosing best action then its still correct policy. Forward and left are large negatives since they would be a traffic violation for running red light</p>
+</li>
+</ul>
+<p>This demonstrates that the agent should choose the None action if the light is red, and the next waypoint is not right</p>
 <p><strong>Examples where the agent didn't learn the optimal policy</strong>:</p>
 <ul>
 <li>('right', 'green', 'forward', 'forward')<ul>
-<li>forward : 0.73</li>
+<li><strong>forward : 0.73</strong></li>
 <li>None : 0.00</li>
 <li>right : 0.00</li>
 <li>left : 0.00</li>
 </ul>
 </li>
 </ul>
-<p>Waypoint is right and light is green, however the action chosen here would be to go forward. This is probably because of the forward traffic coming from the left, which would cause an accident if the cars didn't have to stop for the red light, since our agent has a green light.</p>
+<p>This example demonstrates a sub optimal policy, where the agent should have chosen to go Right since the next waypoint is right and the light is green, however the action here would be to go forward. The action is sub optimal as it wouldn't take the agent closer to the destination, and this action would be penalised since it is not correct, however the action would not cause any traffic violations since there is a green light. The other values all being 0 indicate that maybe the agent did not encounter this state enough in the trials to learn the optimal Q values for this state.</p>
 
 </div>
 </div>
