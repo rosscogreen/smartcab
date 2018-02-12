@@ -13241,10 +13241,9 @@ AABJRU5ErkJggg==
 <p><strong>State Space</strong></p>
 <ul>
 <li>Combinations of Features = 3 x 2 x 4 x 4 = 96</li>
-<li>Size of state space = 96</li>
 <li>There are 96 different states that the Smartcab can be in </li>
 <li>For each of these states the agent can chose 1 of 4 valid actions [left, right, forward, None]</li>
-<li>Need to learn the best action to take for each of these states</li>
+<li>Therefore the size of the state space is 96 * 4 = 384</li>
 </ul>
 
 </div>
@@ -13254,8 +13253,8 @@ AABJRU5ErkJggg==
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Update-the-Driving-Agent-State">Update the Driving Agent State<a class="anchor-link" href="#Update-the-Driving-Agent-State">&#182;</a></h3><p>For your second implementation, navigate to the <code>'build_state()'</code> agent function. With the justification you've provided in <strong>Question 4</strong>, you will now set the <code>'state'</code> variable to a tuple of all the features necessary for Q-Learning. Confirm your driving agent is updating its state by running the agent file and simulation briefly and note whether the state is displaying. If the visual simulation is used, confirm that the updated state corresponds with what is seen in the simulation.</p>
-<p><strong>Note:</strong> Remember to reset simulation flags to their default setting when making this observation!</p>
+<h2 id="Update-the-Driving-Agent-State">Update the Driving Agent State<a class="anchor-link" href="#Update-the-Driving-Agent-State">&#182;</a></h2><p>For your second implementation, navigate to the 'build_state()' agent function. With the justification you've provided in <strong>Question 4</strong>, you will now set the 'state' variable to a tuple of all the features necessary for Q-Learning. Confirm your driving agent is updating its state by running the agent file and simulation briefly and note whether the state is displaying. If the visual simulation is used, confirm that the updated state corresponds with what is seen in the simulation.</p>
+<p><strong>Note</strong>: Remember to reset simulation flags to their default setting when making this observation!</p>
 
 </div>
 </div>
